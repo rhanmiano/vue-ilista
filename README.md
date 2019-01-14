@@ -28,3 +28,10 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Todo
+#### Frontend
+  - [ ] Http request for Add
+  - [ ] Http request for Update
+  - [ ] Http request for Delete
+  - [ ] Search function
