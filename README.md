@@ -1,4 +1,5 @@
 # vue-ilista
+A remake of iLista app using VueJS for frontend.
 
 ## Project setup
 ```
