@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <div class="row">
-      <CustomerList :customers="customers" :page="page"/>
+      <CustomerList :customers="customers" @select-customer="displayCustomer" :page="page"/>
       
       <section class="app-actions col-md-4">
         <a class="btn btn-default btn-small" title="See github documentation" href="https://github.com/rhanmiano/iLista" rel="noopener" target="_blank" role="button">About</a>
@@ -16,7 +16,7 @@
         </div>
 
         <AddCustomer :action="action" :page="page"/>
-        <UpdateCustomer :action="action" :page="page" @select-customer="$emit('displayCustomer', customer)" :selectedCustomer="selectedCustomer"/>
+        <UpdateCustomer :action="action" :page="page" :selectedCustomer="selectedCustomer"/>
         <DeleteCustomer :customers="customers" :action="action" :page="page" />
       </section>
     </div>    
@@ -28,6 +28,7 @@ import CustomerList from './CustomerList';
 import AddCustomer from './AddCustomer';
 import UpdateCustomer from './UpdateCustomer';
 import DeleteCustomer from './DeleteCustomer';
+import axios from 'axios';
 
 export default {
   name: 'AppWrapper',
@@ -39,13 +40,7 @@ export default {
   },
   data() {
     return {
-      customers: [
-        {id: 1, clickable: false, name: "John Doe", email: 'johndoe@sample.com', age: 30},
-        {id: 2, clickable: false, name: "Joe Doe", email: 'joedoe@sample.com', age: 25},
-        {id: 3, clickable: false, name: "Jack Doe", email: 'jackdoe@sample.com', age: 32},
-        {id: 4, clickable: false, name: "Jill Doe", email: 'jilldoe@sample.com', age: 40},
-        {id: 5, clickable: false, name: "James Doe", email: 'jamesdoe@sample.com', age: 31}
-      ],
+      customers: [],
       action: {
         add: false,
         update: false,
@@ -56,7 +51,7 @@ export default {
         caption: "Choose an action"     
       },
       page: {
-        loading: false
+        loading: true
       },
       selectedCustomer: {}
     };
@@ -99,12 +94,28 @@ export default {
         val.clickable = false;
       });
     },
-    displayCustomer(customer){        
-      if(this.actions.update){
+    displayCustomer(customer){
+      if(this.action.update){        
         this.selectedCustomer = customer;
       }
     } 
 
+  },
+  mounted(){
+    axios({
+      method: 'get',
+      url: 'https://www.rhanmiano.com/api/ilista/customers',
+      responseType: 'json',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      console.log(response.data.customers);
+      this.customers = response.data.customers;
+
+      this.page.loading = this.customers.length === 0 ? true : false;
+    })
   }
 };
 </script>
