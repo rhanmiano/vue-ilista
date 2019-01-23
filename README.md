@@ -31,7 +31,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Todo
 #### Frontend
-  - [ ] Http request for Add
+  - [X] Http request for Get
+  - [X] Http request for Add
   - [ ] Http request for Update
   - [ ] Http request for Delete
   - [ ] Search function
