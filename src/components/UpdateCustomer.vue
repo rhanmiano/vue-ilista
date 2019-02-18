@@ -10,6 +10,6 @@
 <script>
 export default{
   name: 'UpdateCustomer',
-  props: ['selectedCustomer', 'action', 'page']
+  props: ['selectedCustomer', 'action', 'page'],
 };
 </script>
