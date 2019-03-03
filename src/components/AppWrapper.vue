@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <div class="row">
-      <CustomerList :customers="customers" @select-customer="displayCustomer" :page="page"/>
+      <CustomerList :customers="customers" @select-customer="displayCustomer" :page="page" :action="action"/>
       
       <section class="app-actions col-md-4">
         <a class="btn btn-default btn-small" title="See github documentation" href="https://github.com/rhanmiano/iLista" rel="noopener" target="_blank" role="button">About</a>
@@ -16,8 +16,8 @@
         </div>
 
         <AddCustomer :action="action" @add-customer="submitAddCustomer" :customerDetails="customerDetails" :page="page"/>
-        <UpdateCustomer :action="action" :page="page" :selectedCustomer="selectedCustomer"/>
-        <DeleteCustomer :customers="customers" :action="action" :page="page" />
+        <UpdateCustomer :action="action" @update-customer="submitUpdateCustomer" :selectedCustomer="selectedCustomer" :page="page"/>
+        <DeleteCustomer :customers="customers" @delete-customer="submitDeleteCustomer" :action="action" :page="page" />
       </section>
     </div>    
   </div>
@@ -97,7 +97,7 @@ export default {
     },
     displayCustomer(customer){
       if(this.action.update){        
-        this.selectedCustomer = customer;
+        this.selectedCustomer = JSON.parse(JSON.stringify(customer));
       }
     },
     submitAddCustomer(customer){
@@ -122,7 +122,7 @@ export default {
             this.message.status  = data.status;        
             this.message.caption = data.message;
             this.customerDetails = {};
-            this.getCustomers();
+            this.getCustomers('add');
           } else if (data.status == 'failed'){
             this.message.status  = data.status;
             this.message.caption = data.message;
@@ -134,10 +134,82 @@ export default {
         this.message.status = "failed";
         this.message.caption = "Required fields must not be empty";
         this.page.loading = false;
-      }
-      
+      }      
     },
-    getCustomers(){
+    submitUpdateCustomer(customer){
+      this.message.status = 'default';        
+      this.message.caption = 'Waiting for response...';
+
+      if(!(Object.keys(customer).length === 0 && customer.constructor === Object)) {
+        axios({
+          method: 'post',
+          url: 'http://ilista:5001/api/update/customer/' + customer.id,
+          data: JSON.stringify(customer),
+          responseType: 'json',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then(response => {
+          let data = response.data;
+          if(data.status == 'success') {
+            this.page.loading    = true;
+            this.customers       = [];
+            this.message.status  = data.status;        
+            this.message.caption = data.message;
+            this.selectedCustomer = {};
+            this.getCustomers('update');
+
+          } else if (data.status == 'failed'){
+            this.message.status  = data.status;
+            this.message.caption = data.message;
+            this.selectedCustomer = {};
+            this.page.loading    = false;
+          } 
+        })
+      } else {
+        this.message.status = "failed";
+        this.message.caption = "Required fields must not be empty";
+        this.page.loading = false;
+      }
+    },
+    submitDeleteCustomer(customerID){
+      this.message.status = 'default';        
+      this.message.caption = 'Waiting for response...';
+      console.log(customerID);
+      if(customerID) {
+        axios({
+          method: 'post',
+          url: 'http://ilista:5001/api/delete/customer/' + customerID,
+          responseType: 'json',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+        .then(response => {
+          let data = response.data;
+          if(data.status == 'success') {
+            this.page.loading    = true;
+            this.customers       = [];
+            this.message.status  = data.status;        
+            this.message.caption = data.message;
+            this.selectedCustomer = {};
+            this.getCustomers('delete');
+
+          } else if (data.status == 'failed'){
+            this.message.status  = data.status;
+            this.message.caption = data.message;
+            this.selectedCustomer = {};
+            this.page.loading    = false;
+          } 
+        })
+      } else {
+        this.message.status = "failed";
+        this.message.caption = "Required fields must not be empty";
+        this.page.loading = false;
+      }
+    },
+    getCustomers(action){
       axios({
         method: 'get',
         // url: 'https://www.rhanmiano.com/api/ilista/customers',
@@ -152,6 +224,12 @@ export default {
         this.customers = response.data.customers;
 
         this.page.loading = this.customers.length === 0 ? true : false;
+
+        if (action == 'update' && this.customers.length > 0) {
+          this.customers.forEach(function(val){
+            val.clickable = true;
+          });
+        }
       })
       .catch(err => {
         console.log(err);
@@ -189,7 +267,7 @@ export default {
         &:hover{
           background-color: darken($denotive-disabled-white, 5%);
           text-decoration: none;
-        }
+        } 
       } 
       .btn-actions {
         display: flex;

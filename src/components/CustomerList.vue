@@ -29,7 +29,7 @@
               </div>                    
               </td>
             </tr>
-            <tr v-else v-bind:key="customer.id" v-for="customer in customers" v-bind:class="{'asdasd': customer.clickable}" @click="$emit('select-customer', customer);check(customer)">
+            <tr v-else v-bind:key="customer.id" v-for="customer in customers" v-bind:class="{'is-clickable': action.update && customer.clickable}" @click="$emit('select-customer', customer)">
               <td v-text="customer.id"></td>
               <td v-text="customer.name"></td>
               <td v-text="customer.email"></td>
@@ -45,11 +45,8 @@
 <script>
 export default {
   name: 'CustomerList',
-  props: ['customers', 'page'],
+  props: ['customers', 'page', 'action'],
   methods: {
-    check(arg) {
-      console.log(arg.clickable);
-    }
   }
 }
 </script>
