@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <div class="row">
-      <CustomerList :customers="customers" @select-customer="displayCustomer" :page="page" :action="action"/>
+      <CustomerList :customers="filtered" @select-customer="displayCustomer" @search-customer="getSearchString" :page="page" :action="action"/>
       
       <section class="app-actions col-md-4">
         <a class="btn btn-default btn-small" title="See github documentation" href="https://github.com/rhanmiano/iLista" rel="noopener" target="_blank" role="button">About</a>
@@ -54,10 +54,24 @@ export default {
         loading: true
       },
       selectedCustomer: {},
-      customerDetails: {}
+      customerDetails: {},
+      searchString: "",
+
     };
   },
+  computed: {
+      filtered(){
+        var self=this;
+        return this.customers.filter(function(customer){
+          return customer.name.toLowerCase().includes(self.searchString.toLowerCase())
+        });
+      } 
+  },
   methods: {
+    getSearchString(search){
+      console.log(search);
+      this.searchString = search;      
+    },
     addCustomer() {
       this.action.add = true;
       this.action.update = false;
@@ -176,7 +190,6 @@ export default {
     submitDeleteCustomer(customerID){
       this.message.status = 'default';        
       this.message.caption = 'Waiting for response...';
-      console.log(customerID);
       if(customerID) {
         axios({
           method: 'post',
@@ -220,7 +233,6 @@ export default {
         }
       })
       .then(response => {
-        console.log(response.data.customers);
         this.customers = response.data.customers;
 
         this.page.loading = this.customers.length === 0 ? true : false;
@@ -237,7 +249,7 @@ export default {
     }
 
   },
-  mounted(){
+  created(){
     this.getCustomers();
   }
 };

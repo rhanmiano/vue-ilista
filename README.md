@@ -33,6 +33,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 #### Frontend
   - [X] Http request for Get
   - [X] Http request for Add
-  - [ ] Http request for Update
-  - [ ] Http request for Delete
-  - [ ] Search function
+  - [X] Http request for Update
+  - [X] Http request for Delete
+  - [X] Search function

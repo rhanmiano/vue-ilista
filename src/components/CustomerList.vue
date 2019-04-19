@@ -6,7 +6,7 @@
       </header>        
     </div>
     <div class="row">
-      <input type="text" name="search" class="form-control mb-5" ng-model="searchCustomer" placeholder="Search a customer">
+      <input type="text" name="search" class="form-control mb-5" v-model="searchString" @keyup="emitSearchString" placeholder="Search a customer">
     </div>
     <div class="row">            
       <div class="col-md-12">    
@@ -30,7 +30,7 @@
               </td>
             </tr>
             <tr v-else v-bind:key="customer.id" v-for="customer in customers" v-bind:class="{'is-clickable': action.update && customer.clickable}" @click="$emit('select-customer', customer)">
-              <td v-text="customer.id"></td>
+              <td v-text=""></td>
               <td v-text="customer.name"></td>
               <td v-text="customer.email"></td>
               <td v-text="customer.age"></td>
@@ -46,13 +46,20 @@
 export default {
   name: 'CustomerList',
   props: ['customers', 'page', 'action'],
+  data(){
+    return {
+      searchString: ""
+    }
+  },
   methods: {
+    emitSearchString() {
+      this.$emit('search-customer', this.searchString);
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
   .app-list{
     .row > .customer-header{
       width: 100%;
