@@ -121,7 +121,7 @@ export default {
       if(!(Object.keys(customer).length === 0 && customer.constructor === Object)) {
         axios({
           method: 'post',
-          url: 'http://ilista:5001/api/add/customer',
+          url: `${process.env.VUE_APP_API_URL}/api/add/customer`,
           data: JSON.stringify(customer),
           responseType: 'json',
           headers: {
@@ -157,7 +157,7 @@ export default {
       if(!(Object.keys(customer).length === 0 && customer.constructor === Object)) {
         axios({
           method: 'post',
-          url: 'http://ilista:5001/api/update/customer/' + customer.id,
+          url: `${process.env.VUE_APP_API_URL}/api/update/customer/${customer.id}`,
           data: JSON.stringify(customer),
           responseType: 'json',
           headers: {
@@ -169,7 +169,7 @@ export default {
           if(data.status == 'success') {
             this.page.loading    = true;
             this.customers       = [];
-            this.message.status  = data.status;        
+            this.message.status  = data.status;
             this.message.caption = data.message;
             this.selectedCustomer = {};
             this.getCustomers('update');
@@ -193,7 +193,7 @@ export default {
       if(customerID) {
         axios({
           method: 'post',
-          url: 'http://ilista:5001/api/delete/customer/' + customerID,
+          url: `${process.env.VUE_APP_API_URL}/api/delete/customer/${customerID}`,
           responseType: 'json',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -226,7 +226,7 @@ export default {
       axios({
         method: 'get',
         // url: 'https://www.rhanmiano.com/api/ilista/customers',
-        url: 'http://ilista:5001/api/customers',
+        url: `${process.env.VUE_APP_API_URL}/api/customers`,
         responseType: 'json',
         headers: {
           'Content-Type': 'application/json'
@@ -235,7 +235,7 @@ export default {
       .then(response => {
         this.customers = response.data.customers;
 
-        this.page.loading = this.customers.length === 0 ? true : false;
+        this.page.loading = false;
 
         if (action == 'update' && this.customers.length > 0) {
           this.customers.forEach(function(val){
