@@ -1,6 +1,8 @@
 # vue-ilista
 A remake of iLista app using VueJS for frontend.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b20ce4b2-4933-4b6f-ac15-83bbd97a3285/deploy-status)](https://app.netlify.com/sites/rhanmiano-vue-ilista/deploys)
+
 ## Project setup
 ```
 npm install
